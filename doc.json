@@ -1,0 +1,207 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"建材商城api文档",
+        "version":"1.0"
+    },
+    "servers": [
+        {
+            "url":"http://localhost/api/v1",
+            "description": "接口地址"
+        }
+    ],
+    "components": {
+        "schemas": {
+            "role": {
+                "type":"object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "角色名"
+                    },
+                    "display_name": {
+                        "type": "string",
+                        "description": "显示名称"
+                    },
+                    "permissions": {
+                        "type": "array",
+                        "description": "权限列表",
+                        "items": {
+                            "$ref": "#/components/schemas/permission"
+                        }
+                    }
+                }
+            },
+            "permission": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "权限名称"
+                    },
+                    "display_name": {
+                        "type": "string",
+                        "description": "显示名称"
+                    }
+                }
+            },
+            "user": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "用户名"
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "description": "手机号"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "description": "角色列表",
+                        "items": {
+                            "$ref": "#/components/schemas/role"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key": {
+                "name": "Authorization",
+                "in": "header",
+                "type": "apiKey"
+            }
+        }
+    },
+    "paths": {
+        "/register": {
+            "post": {
+                "summary": "商家注册",
+                "parameters": [],
+                "requestBody":{
+                    "description": "商家注册请求",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["mobile", "password", "password_confirm"],
+                                "properties": {
+                                    "mobile": {
+                                        "type": "string",
+                                        "description": "手机号码"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "密码"
+                                    },
+                                    "password_confirm": {
+                                        "type": "string",
+                                        "description": "密码确认"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/user"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/account": {
+            "get": {
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ],
+                "tags": ["user"],
+                "summary": "获取当前用户信息",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/user"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": ["user"],
+                "summary": "用户登录",
+                "requestBody":{
+                    "description": "登录请求",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["username", "password"],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "用户名"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "密码"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["token"],
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "description": "token"
+                                        },
+                                        "username": {
+                                            "type": "string",
+                                            "description": "用户名"
+                                        },
+                                        "mobile": {
+                                            "type": "string",
+                                            "description": "手机号"
+                                        },
+                                        "roles": {
+                                            "type": "array",
+                                            "description": "角色列表",
+                                            "items": {
+                                                "$ref": "#/components/schemas/role"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
